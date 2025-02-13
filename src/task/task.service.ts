@@ -27,7 +27,7 @@ export class TaskService {
       throw new NotFoundException(`Task with ID ${id} not found`);
     }
 
-    Object.assign(task, updateTaskDto);  // Update fields based on the DTO
+    Object.assign(task, updateTaskDto);
     return this.taskRepository.save(task);
   }
 
@@ -48,7 +48,7 @@ export class TaskService {
     limit: number = 10,
     status: TaskStatus | null = null,
     priority: TaskPriority | null = null,
-  ): Promise<Task[]> {
+  ): Promise<{ tasks: Task[]; totalCount: number }> {
     const queryBuilder = this.taskRepository.createQueryBuilder('task');
 
     if (status) {
@@ -59,8 +59,13 @@ export class TaskService {
       queryBuilder.andWhere('task.priority = :priority', { priority });
     }
 
-    queryBuilder.skip((page - 1) * limit).take(limit).orderBy('task.dateOfCreation', 'DESC');
-    return queryBuilder.getMany();
+    const [tasks, totalCount] = await queryBuilder
+    .skip((page - 1) * limit)
+    .take(limit)
+    .orderBy('task.dateOfCreation', 'DESC')
+    .getManyAndCount();
+
+    return { tasks, totalCount };
   }
 
   async getTaskById(id: number): Promise<Task> {

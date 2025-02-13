@@ -10,10 +10,11 @@ import {
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/createtask.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { Task } from './task.entity';
 import { UpdateTaskDto } from './dto/updatetask.dto';
 import { TaskPriority, TaskStatus } from 'src/common/enums';
+import { TasksResponseDto } from './dto/taskresponse.dto';
 
 @Controller('tasks')
 @ApiTags('Tasks')
@@ -60,15 +61,43 @@ export class TaskController {
     type: Task,
     isArray: true,
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number for pagination',
+    type: Number,
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of tasks per page',
+    type: Number,
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    description: 'Filter tasks by status',
+    type: String,
+    enum: TaskStatus,
+  })
+  @ApiQuery({
+    name: 'priority',
+    required: false,
+    description: 'Filter tasks by priority',
+    type: String,
+    enum: TaskPriority,
+  })
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @Query('status') status: TaskStatus | null = null,
     @Query('priority') priority: TaskPriority | null = null,
-  ): Promise<Task[]> {
+  ): Promise<TasksResponseDto> {
     return this.taskService.getTasks(page, limit, status, priority);
   }
-
+  
   @Get(':id')
   @ApiOperation({ summary: 'Fetch one task by ID' })
   @ApiResponse({ status: 200, description: 'Task details', type: Task })
