@@ -19,6 +19,9 @@ import { ConfigModule } from '@nestjs/config';
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: process.env.NODE_ENV === 'production' ? false : true,
+      ssl: {
+        rejectUnauthorized: false
+      }
     }),
     TaskModule
   ],
