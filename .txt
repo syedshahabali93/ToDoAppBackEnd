@@ -1,0 +1,6 @@
+PORT=5432
+DB_HOST=dpg-cumrtfij1k6c73b2uf4g-a.oregon-postgres.render.com
+DB_PORT=5432
+DB_USERNAME=todo_admin
+DB_PASSWORD=BN8g2gp127OMjPTAmS1NBEuhJgxdmt4h
+DB_NAME=todo_db_2xd9
